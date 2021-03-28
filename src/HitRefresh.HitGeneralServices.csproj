@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5</TargetFramework>
-    <PackageId>PlasticMetal.MobileSuit</PackageId>
+    <PackageId>HitGeneralServices</PackageId>
     <Authors>PlaticMetal</Authors>
     <OutputType>Library</OutputType>
     <AssemblyName>HitGeneralServices</AssemblyName>
