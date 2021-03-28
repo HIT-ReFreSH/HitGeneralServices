@@ -1,0 +1,66 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
+
+namespace HitRefresh.HitGeneralServices
+{
+    /// <summary>
+    /// 用户校园信息. 应由<see cref="HitInfoProviderFactory.GetHitInfo(ClaimsPrincipal)"/> 产生。
+    /// </summary>
+    public class HitInfoProvider
+    {
+        private const string CasAuth = "casattras";
+        private static readonly Regex RegexTeacherId = new(@"^[0-9]{8}$");
+        private static readonly Regex RegexInternationalStudentId = new(@"^[Ll][0-9]{9}$");
+        private static readonly Regex RegexUndergraduateId = new(@"^([0-9]{10})|(1[0-9]{2}[Ll][0-9]{6})$");
+        private static readonly Regex RegexMasterId = new(@"^[0-9]{2}[Ss][0-9]{6}$");
+        private static readonly Regex RegexDoctorId = new(@"^[0-9]{2}[Bb][0-9]{6}$");
+        /// <summary>
+        /// 用户的校园角色
+        /// </summary>
+        public HitRole Role { get; }
+        /// <summary>
+        /// 用户的学/工号。如果是非校园成员，则为空串。
+        /// </summary>
+        public string Id { get; }
+        /// <summary>
+        /// 用户的姓名。如果是非校园成员，则为空串。
+        /// </summary>
+        public string Name { get; }
+        internal HitInfoProvider(IDictionary<string, Claim> claims)
+        {
+            if (!claims.TryGetValue(ClaimTypes.AuthenticationMethod, out var authMethod)
+                || authMethod.Value != CasAuth
+                || !claims.TryGetValue(ClaimTypes.NameIdentifier, out var id))
+            {
+                // 非统一身份认证的用户，Id都是空的。
+                Role = HitRole.NotMember;
+                Id = string.Empty;
+                Name = string.Empty;
+            }
+            else
+            {
+                Id = id.Value;
+                Role = RegexUndergraduateId.IsMatch(Id)
+                        ? HitRole.Undergraduate
+                    : RegexInternationalStudentId.IsMatch(Id) 
+                        ? HitRole.InternationalStudent
+                    : RegexTeacherId.IsMatch(Id)
+                        ? HitRole.Teacher
+                    : RegexMasterId.IsMatch(Id)
+                        ? HitRole.Master
+                    : RegexDoctorId.IsMatch(Id)
+                        ? HitRole.Doctor
+                    : HitRole.Else;
+
+                Name = claims.TryGetValue(ClaimTypes.Name, out var name)
+                    ? name.Value
+                    : string.Empty;
+            }
+
+
+        }
+    }
+}
