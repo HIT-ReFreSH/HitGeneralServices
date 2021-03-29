@@ -29,11 +29,11 @@ namespace HitRefresh.HitGeneralServices
         /// 用户的姓名。如果是非校园成员，则为空串。
         /// </summary>
         public string Name { get; }
-        internal HitInfoProvider(IDictionary<string, Claim> claims)
+        internal HitInfoProvider(IDictionary<string, Claim> claims, HitInfoProviderOptions options)
         {
-            if (!claims.TryGetValue(ClaimTypes.AuthenticationMethod, out var authMethod)
+            if (!claims.TryGetValue(options.AuthMethodClaimType, out var authMethod)
                 || authMethod.Value != CasAuth
-                || !claims.TryGetValue(ClaimTypes.NameIdentifier, out var id))
+                || !claims.TryGetValue(options.IdClaimType, out var id))
             {
                 // 非统一身份认证的用户，Id都是空的。
                 Role = HitRole.NotMember;
@@ -55,7 +55,7 @@ namespace HitRefresh.HitGeneralServices
                         ? HitRole.Doctor
                     : HitRole.Else;
 
-                Name = claims.TryGetValue(ClaimTypes.Name, out var name)
+                Name = claims.TryGetValue(options.NameClaimType, out var name)
                     ? name.Value
                     : string.Empty;
             }

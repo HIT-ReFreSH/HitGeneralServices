@@ -9,12 +9,18 @@ namespace HitRefresh.HitGeneralServices
     /// </summary>
     public class HitInfoProviderFactory
     {
+        private readonly HitInfoProviderOptions _options;
+
+        internal HitInfoProviderFactory(HitInfoProviderOptions options)
+        {
+            _options = options;
+        }
         /// <summary>
         /// 获取给定用户的校园信息
         /// </summary>
         /// <param name="user">当前用户</param>
         /// <returns>用户的校园信息</returns>
         public HitInfoProvider GetHitInfo(ClaimsPrincipal user)
-            => new(user.Claims.ToDictionary(c=>c.Type));
+            => new(user.Claims.ToDictionary(c => c.Type), _options);
     }
 }
