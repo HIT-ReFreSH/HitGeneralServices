@@ -45,7 +45,7 @@ namespace HitRefresh.HitGeneralServices
                 Id = id.Value;
                 Role = RegexUndergraduateId.IsMatch(Id)
                         ? HitRole.Undergraduate
-                    : RegexInternationalStudentId.IsMatch(Id) 
+                    : RegexInternationalStudentId.IsMatch(Id)
                         ? HitRole.InternationalStudent
                     : RegexTeacherId.IsMatch(Id)
                         ? HitRole.Teacher
@@ -59,8 +59,20 @@ namespace HitRefresh.HitGeneralServices
                     ? name.Value
                     : string.Empty;
             }
-
-
+        }
+        /// <summary>
+        /// 用于清除数据中的BUG：姓名双写。
+        /// 因为历史遗留问题，部分用户的姓名是双写的，如：张三张三
+        /// </summary>
+        /// <returns>清除双写后的姓名。"张三"->"张三"；"张三张三"->"张三"</returns>
+        private string CleanDoubleName(string originName)
+        {
+            // 奇数长度必然不是双写
+            if ((originName.Length & 1) == 1) return originName;
+            var hl = originName.Length >> 1;
+            return originName[..hl] == originName[hl..]
+                ? originName[..hl]
+                : originName;
         }
     }
 }

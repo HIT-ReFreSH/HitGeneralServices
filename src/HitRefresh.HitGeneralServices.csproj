@@ -14,14 +14,14 @@
     <PackageProjectUrl>https://github.com/HIT-ReFreSH/HitGeneralServices</PackageProjectUrl>
     <RepositoryUrl>https://github.com/HIT-ReFreSH/HitGeneralServices.git</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <Version>0.1</Version>
+    <Version>0.2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Nullable>enable</Nullable>
     <LangVersion>9.0</LangVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <PackageReleaseNotes>版本1：添加了Moodle(乐学网)登陆后的信息提取模块.</PackageReleaseNotes>
+    <PackageReleaseNotes>版本0.2：添加了Moodle(乐学网)登陆后的信息提取模块, 并解决姓名双写的历史遗留问题.</PackageReleaseNotes>
     <Description>一些和HIT校园相关的小服务.</Description>
     <Copyright>Copyright (c) 2019-2021 ReFreSH</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
