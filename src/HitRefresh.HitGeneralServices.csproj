@@ -1,38 +1,86 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net5</TargetFramework>
-    <PackageId>HitGeneralServices</PackageId>
-    <Authors>HitRefresh</Authors>
-    <OutputType>Library</OutputType>
-    <AssemblyName>HitGeneralServices</AssemblyName>
-    <RootNamespace>HitRefresh.HitGeneralServices</RootNamespace>
-    <GenerateDocumentFile>true</GenerateDocumentFile>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-
-    <Company>Hit-ReFreSH</Company>
-    <PackageProjectUrl>https://github.com/HIT-ReFreSH/HitGeneralServices</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/HIT-ReFreSH/HitGeneralServices.git</RepositoryUrl>
-    <RepositoryType>Github</RepositoryType>
-    <Version>0.4.1</Version>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <PackageReleaseNotes>版本0.4.1：增强了CAS登录模块.</PackageReleaseNotes>
-    <Description>一些和HIT校园相关的小服务,提供乐学网认证用户信息和统一身份认证服务。详见https://github.com/HIT-ReFreSH/HitGeneralServices.</Description>
-    <Copyright>Copyright (c) 2019-2021 ReFreSH</Copyright>
-	
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <NeutralLanguage>zh-CN</NeutralLanguage>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-  </ItemGroup>
-
+	<PropertyGroup>
+		<TargetFramework>
+			net5
+		</TargetFramework>
+		<PackageId>
+			HitGeneralServices
+		</PackageId>
+		<Authors>
+			HitRefresh
+		</Authors>
+		<OutputType>
+			Library
+		</OutputType>
+		<AssemblyName>
+			HitGeneralServices
+		</AssemblyName>
+		<RootNamespace>
+			HitRefresh.HitGeneralServices
+		</RootNamespace>
+		<GenerateDocumentFile>
+			true
+		</GenerateDocumentFile>
+		<PackageRequireLicenseAcceptance>
+			true
+		</PackageRequireLicenseAcceptance>
+		<Company>
+			Hit-ReFreSH
+		</Company>
+		<PackageProjectUrl>
+			https://github.com/HIT-ReFreSH/HitGeneralServices
+		</PackageProjectUrl>
+		<RepositoryUrl>
+			https://github.com/HIT-ReFreSH/HitGeneralServices.git
+		</RepositoryUrl>
+		<RepositoryType>
+			Github
+		</RepositoryType>
+		<Version>
+			0.4.1
+		</Version>
+		<PackageLicenseExpression>
+			MIT
+		</PackageLicenseExpression>
+		<Nullable>
+			enable
+		</Nullable>
+		<LangVersion>
+			9.0
+		</LangVersion>
+		<PublishRepositoryUrl>
+			true
+		</PublishRepositoryUrl>
+		<DocumentationFile>
+			bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml
+		</DocumentationFile>
+		<PackageReleaseNotes>
+			版本0.4.1.1：增强了CAS登录模块.
+		</PackageReleaseNotes>
+		<Description>
+			一些和HIT校园相关的小服务,提供乐学网认证用户信息和统一身份认证服务。详见https://github.com/HIT-ReFreSH/HitGeneralServices.
+		</Description>
+		<Copyright>
+			Copyright (c) 2019-2021 ReFreSH
+		</Copyright>
+		<PackageReadmeFile>
+			README.md
+		</PackageReadmeFile>
+		<GeneratePackageOnBuild>
+			true
+		</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>
+			true
+		</PackageRequireLicenseAcceptance>
+		<NeutralLanguage>
+			zh-CN
+		</NeutralLanguage>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="../README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+	</ItemGroup>
 </Project>
