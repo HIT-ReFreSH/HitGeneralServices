@@ -12,7 +12,7 @@
 		<PackageProjectUrl>https://github.com/HIT-ReFreSH/HitGeneralServices</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/HIT-ReFreSH/HitGeneralServices.git</RepositoryUrl>
 		<RepositoryType>Github</RepositoryType>
-		<Version>0.4.1</Version>
+		<Version>0.4.1.1</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Nullable>enable</Nullable>
 		<LangVersion>9.0</LangVersion>
