@@ -12,8 +12,8 @@ namespace TestConsole
     {
         public async void Login(string username, string password)
         {
-            var server = new LoginHttpClient(username, password);
-            await server.LoginAsync(LoginHttpClient.WindowsCaptchaInput);
+            var server = new LoginHttpClient();
+            await server.LoginAsync(username, password, LoginHttpClient.Win32CaptchaInput);
             var rep = await server.GetAsync("http://ids.hit.edu.cn/authserver/login");
             Console.WriteLine(rep.RequestMessage?.RequestUri?.ToString());
         }

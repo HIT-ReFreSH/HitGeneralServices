@@ -20,7 +20,7 @@ namespace HitRefresh.HitGeneralServices
         /// <summary>
         /// 留学生
         /// </summary>
-        InternationalStudent,
+        InternationalStudent=-1,
         /// <summary>
         /// 硕士
         /// </summary>

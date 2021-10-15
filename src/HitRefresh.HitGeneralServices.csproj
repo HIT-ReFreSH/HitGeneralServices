@@ -14,16 +14,17 @@
     <PackageProjectUrl>https://github.com/HIT-ReFreSH/HitGeneralServices</PackageProjectUrl>
     <RepositoryUrl>https://github.com/HIT-ReFreSH/HitGeneralServices.git</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <Version>0.4</Version>
+    <Version>0.4.1</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Nullable>enable</Nullable>
     <LangVersion>9.0</LangVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <PackageReleaseNotes>版本0.3：添加了CAS登录模块.</PackageReleaseNotes>
-    <Description>一些和HIT校园相关的小服务.</Description>
+    <PackageReleaseNotes>版本0.4.1：增强了CAS登录模块.</PackageReleaseNotes>
+    <Description>一些和HIT校园相关的小服务,提供乐学网认证用户信息和统一身份认证服务。详见https://github.com/HIT-ReFreSH/HitGeneralServices.</Description>
     <Copyright>Copyright (c) 2019-2021 ReFreSH</Copyright>
+	
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <NeutralLanguage>zh-CN</NeutralLanguage>
