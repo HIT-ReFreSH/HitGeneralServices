@@ -1,5 +1,5 @@
 <div  align=center>
-    <img src="images/Full_2048.png" width = 30% height = 30%  />
+    <img src="https://github.com/HIT-ReFreSH/HitGeneralServices/raw/master/images/Full_2048.png" width = 30% height = 30%  />
 </div>
 
 # HitGeneralServices-HIT通用服务集

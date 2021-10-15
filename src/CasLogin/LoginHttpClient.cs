@@ -127,6 +127,7 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         /// <exception cref="LoginFailedException">登陆认证失败</exception>
         public async Task TryLoginFor(string username, string password, uint maxTrial, Func<Stream, Task<string>>? captchaGenerator = null)
         {
+            Exception? lastEx = null;
             for (var i = 0u; i < maxTrial; i++)
             {
                 try
@@ -140,13 +141,16 @@ namespace HitRefresh.HitGeneralServices.CasLogin
                 catch (LoginFailedException loginFailed)
                 {
                     if (loginFailed.Message.Contains(WrongPasswordOrId)) throw;
+                    lastEx = loginFailed;
                     continue;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    lastEx = ex;
                     continue;
                 }
             }
+            if (lastEx is not null) throw lastEx;
         }
         /// <summary>
         /// 进行CAS登录
