@@ -6,10 +6,26 @@ namespace HitRefresh.HitGeneralServices.CasLogin
 {
     public partial class LoginHttpClient
     {
-        private class CryptoJsAes:IDisposable
+        private class CryptoJsAes : IDisposable
         {
+            public CryptoJsAes(string strPassword)
+            {
+                Aes.Key = Encoding.UTF8.GetBytes(strPassword);
+                Aes.IV = Encoding.UTF8.GetBytes(GetRandomString(16));
+                Aes.Padding = PaddingMode.PKCS7;
+                Aes.Mode = CipherMode.CBC;
+            }
+
+            private Aes Aes { get; } = Aes.Create();
+
+
+            public void Dispose()
+            {
+                Aes.Dispose();
+            }
+
             /// <summary>
-            /// 获取一段指定长度的随机字符串
+            ///     获取一段指定长度的随机字符串
             /// </summary>
             /// <param name="length">随机字符串长度</param>
             /// <returns></returns>
@@ -18,20 +34,8 @@ namespace HitRefresh.HitGeneralServices.CasLogin
                 const string chars = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678";
                 var rnd = new Random();
                 var sb = new StringBuilder(length);
-                for (var i = 0; i < length; i++)
-                {
-                    sb.Append(chars[rnd.Next(chars.Length - 1)]);
-                }
+                for (var i = 0; i < length; i++) sb.Append(chars[rnd.Next(chars.Length - 1)]);
                 return sb.ToString();
-            }
-            private Aes Aes{ get; } = Aes.Create();
-
-            public CryptoJsAes(string strPassword)
-            {
-                Aes.Key=Encoding.UTF8.GetBytes(strPassword);
-                Aes.IV = Encoding.UTF8.GetBytes(GetRandomString(16));
-                Aes.Padding = PaddingMode.PKCS7;
-                Aes.Mode = CipherMode.CBC;
             }
 
             public string Encrypt(string strPlainText)
@@ -50,12 +54,6 @@ namespace HitRefresh.HitGeneralServices.CasLogin
                 var originalBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
 
                 return Encoding.UTF8.GetString(originalBytes);
-            }
-
-
-            public void Dispose()
-            {
-                this.Aes.Dispose();
             }
         }
     }
