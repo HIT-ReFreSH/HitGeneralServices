@@ -18,6 +18,7 @@ HIT通用服务集包含了以下常用的组件：
 
 - HitInfoProviderFactory: 用于获取乐学网认证登录后，用户信息的工厂类
 - CasLogin.LoginHttpClient：用于使用统一身份认证登录的HttpClient
+- Jwts.JwtsService：用于Jwts的各种服务
 
 ## HitInfoProviderFactory 使用方法
 
@@ -34,3 +35,13 @@ HIT通用服务集包含了以下常用的组件：
 |IsAuthorized|异步方法|检查是否已经完成统一认证登录|-|`bool`，是/否|-|
 |Win32CaptchaInput|静态函数(验证码填写适配器)|**适用于控制台程序。** 使用Windows默认图片查看器查看验证码图片|-|-|-|
 |CaptchaInputFactory|静态函数(验证码填写适配器工厂)|**适用于控制台程序。** 使用指定查看器生成验证码填写适配器|`string pathToJpegViewer`Jpeg查看器的路径|验证码填写适配器|-|
+
+## Jwts.JwtsService 使用方法
+
+既可以使用依赖注入初始化，也可以直接使用`new`来创建JwtsService的实例。JwtsService提供了以下成员：
+
+|名称|类型|说明|参数|返回值|异常|
+|:---:|:---:|:----|:----|:----|:----|
+|LoginAsync|异步方法|进行统一认证登录|`string username`用户名<br> `string password`密码<br> `Func<Stream, Task<string>>? captchaGenerator`**可选。** 验证码填写适配器，用于在必须时填写验证码。|-|`CaptchaRequiredException`: 需要填写二维码，但是未提供对应的适配器<br>`LoginFailedException`: 登陆认证失败，原因见`Message`。|
+|LoginAsync|异步方法|使用已经登录完毕LoginHttpClient登录Jwts|LoginHttpClient，已经完成登录|-|-|
+|GetScheduleAsync|异步方法|获取课表信息|`uint year`学年<br> `JwtsSemester semester`学期|大小为[7,6]的字符串列表矩阵，7为周一至周日，6为节次；数组的每个元素是该位置的课程(课程可能会占用1-3行)|-|

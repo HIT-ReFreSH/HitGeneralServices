@@ -134,6 +134,7 @@ namespace HitRefresh.HitGeneralServices.CasLogin
                 try
                 {
                     await LoginAsync(username, password, captchaGenerator);
+                    if (await IsAuthorized()) return;
                 }
                 catch (CaptchaRequiredException)
                 {
@@ -167,6 +168,7 @@ namespace HitRefresh.HitGeneralServices.CasLogin
             var htmlDoc = new HtmlDocument();
 
             htmlDoc.Load(await GetStreamAsync(LoginUrl));
+
             var loginInfoNode =
                 htmlDoc.DocumentNode.SelectSingleNode(LoginInfoNodePath);
             var pwdDefaultEncryptSalt = loginInfoNode.SelectSingleNode("//input[@id='pwdDefaultEncryptSalt']")

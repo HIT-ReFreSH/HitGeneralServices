@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net5</TargetFramework>
+		<TargetFramework>net6</TargetFramework>
 		<PackageId>HitGeneralServices</PackageId>
 		<Authors>HitRefresh</Authors>
 		<OutputType>Library</OutputType>
@@ -12,13 +12,13 @@
 		<PackageProjectUrl>https://github.com/HIT-ReFreSH/HitGeneralServices</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/HIT-ReFreSH/HitGeneralServices.git</RepositoryUrl>
 		<RepositoryType>Github</RepositoryType>
-		<Version>0.4.1.3</Version>
+		<Version>0.4.2</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Nullable>enable</Nullable>
 		<LangVersion>9.0</LangVersion>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-		<PackageReleaseNotes>版本0.4.1.2：增强了CAS登录模块.</PackageReleaseNotes>
+		<PackageReleaseNotes>版本0.4.2：增加Jwts服务.</PackageReleaseNotes>
 		<Description>一些和HIT校园相关的小服务,提供乐学网认证用户信息和统一身份认证服务。详见https://github.com/HIT-ReFreSH/HitGeneralServices.</Description>
 		<Copyright>Copyright (c) 2019-2021 ReFreSH</Copyright>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

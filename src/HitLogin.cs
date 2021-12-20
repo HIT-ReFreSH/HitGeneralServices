@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using HitRefresh.HitGeneralServices.CasLogin;
 using Microsoft.Extensions.Configuration;
 
@@ -32,9 +34,30 @@ namespace HitRefresh.HitGeneralServices
         ///     登录
         /// </summary>
         /// <returns></returns>
-        public async Task LoginAsync()
+        public async Task<IEnumerable<string>> LoginAsync()
         {
-            await HttpClient.TryLoginFor(_username, _password, 5);
+            var report = new List<string>();
+            try
+            {
+                await HttpClient.TryLoginFor(_username, _password, 5);
+            }
+            catch (CaptchaRequiredException)
+            {
+                Console.WriteLine("登录失败：需要验证码");
+                report.Add("登录失败：需要验证码");
+            }
+            catch (LoginFailedException loginFailed)
+            {
+                Console.WriteLine($"登录失败：{loginFailed.Message}");
+                report.Add($"登录失败：{loginFailed.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"登录失败：{ex.Message}");
+                report.Add($"登录失败：{ex.Message}");
+            }
+
+            return report;
         }
     }
 }
