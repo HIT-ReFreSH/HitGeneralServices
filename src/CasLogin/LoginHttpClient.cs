@@ -67,10 +67,10 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         }
 
         /// <summary>
-        ///     生成使用指定查看器查看二维码的适配器
+        ///     生成使用指定查看器查看验证码的适配器
         /// </summary>
         /// <param name="pathToJpegViewer">Jpeg查看器的路径</param>
-        /// <returns>使用指定查看器查看二维码的适配器</returns>
+        /// <returns>使用指定查看器查看验证码的适配器</returns>
         public static Func<Stream, Task<string>> CaptchaInputFactory(string pathToJpegViewer)
         {
             return async s =>
@@ -122,9 +122,9 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
         /// <param name="maxTrial">最大尝试次数</param>
-        /// <param name="captchaGenerator">用于生成填写二维码的适配器</param>
+        /// <param name="captchaGenerator">用于生成填写验证码的适配器</param>
         /// <returns></returns>
-        /// <exception cref="CaptchaRequiredException">需要填写二维码，但是未提供对应的适配器</exception>
+        /// <exception cref="CaptchaRequiredException">需要填写验证码，但是未提供对应的适配器</exception>
         /// <exception cref="LoginFailedException">登陆认证失败</exception>
         public async Task TryLoginFor(string username, string password, uint maxTrial,
             Func<Stream, Task<string>>? captchaGenerator = null)
@@ -158,12 +158,43 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         /// </summary>
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
-        /// <param name="captchaGenerator">用于生成填写二维码的适配器</param>
+        /// <param name="captchaGenerator">用于生成填写验证码的适配器</param>
         /// <returns></returns>
-        /// <exception cref="CaptchaRequiredException">需要填写二维码，但是未提供对应的适配器</exception>
+        /// <exception cref="CaptchaRequiredException">需要填写验证码，但是未提供对应的适配器</exception>
         /// <exception cref="LoginFailedException">登陆认证失败</exception>
         public async Task LoginAsync(string username, string password,
             Func<Stream, Task<string>>? captchaGenerator = null)
+        {
+            var loginInfo = await GetTwoPhaseLoginInfoAsync(username);
+
+            var pwdDefaultEncryptSalt =
+                loginInfo["password"];
+            loginInfo["password"] = Encrypt(
+                CryptoJsAes.GetRandomString(64) + password, pwdDefaultEncryptSalt);
+            if (loginInfo.ContainsKey("captchaResponse"))
+            {
+                if (captchaGenerator is null) throw new CaptchaRequiredException();
+
+
+                var captchaStream =
+                    await GetStreamAsync(loginInfo["captchaResponse"]);
+                loginInfo["captchaResponse"] = await captchaGenerator(captchaStream);
+            }
+
+            await ApplyTwoPhaseLoginInfoAsync(loginInfo);
+        }
+
+        /// <summary>
+        ///     获取进行两段CAS登录的登录信息(第一阶段)
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <returns>
+        /// 用于两段异步登录的登录信息字典.
+        /// 其中password对应的value是加密的salt，
+        /// captchaResponse对应的value如果存在，则是用于获取验证码的url
+        /// </returns>
+        public async Task<Dictionary<string, string?>>
+            GetTwoPhaseLoginInfoAsync(string username)
         {
             var htmlDoc = new HtmlDocument();
 
@@ -173,21 +204,11 @@ namespace HitRefresh.HitGeneralServices.CasLogin
                 htmlDoc.DocumentNode.SelectSingleNode(LoginInfoNodePath);
             var pwdDefaultEncryptSalt = loginInfoNode.SelectSingleNode("//input[@id='pwdDefaultEncryptSalt']")
                 .GetAttributeValue("value", "");
-            string? captcha = null;
-            var passwordEncrypt = Encrypt(
-                CryptoJsAes.GetRandomString(64) + password, pwdDefaultEncryptSalt);
+
             var captchaRequired = await GetStringAsync(
                 $"{NeedCaptchaUrl}?username={username}&pwdEncrypt2={pwdDefaultEncryptSalt}");
-            if (captchaRequired == "true")
-            {
-                if (captchaGenerator is null) throw new CaptchaRequiredException();
 
-
-                var captchaStream =
-                    await GetStreamAsync(
-                        $"{CaptchaUrl}?ts={new Random().Next(0, 999)}");
-                captcha = await captchaGenerator(captchaStream);
-            }
+            var captcha = captchaRequired == "true" ? $"{CaptchaUrl}?ts={new Random().Next(0, 999)}" : null;
 
             string GetValue(string name)
             {
@@ -197,7 +218,7 @@ namespace HitRefresh.HitGeneralServices.CasLogin
             var postContent = new Dictionary<string, string?>
             {
                 { "username", username },
-                { "password", passwordEncrypt }
+                { "password", pwdDefaultEncryptSalt }
             };
             if (captcha is { })
                 postContent.Add("captchaResponse", captcha);
@@ -211,15 +232,32 @@ namespace HitRefresh.HitGeneralServices.CasLogin
             })
                 postContent.Add(key, GetValue(key));
 
+            return postContent;
+        }
+
+
+        /// <summary>
+        ///     应用两段CAS登录的登录信息进行登录(第二阶段)
+        /// </summary>
+        /// <param name="loginInfo">
+        /// 来自<see cref="GetTwoPhaseLoginInfoAsync(string)"/>的登录信息，但是密码已加密，验证码(如需要)已填写
+        /// </param>
+        /// <returns></returns>
+        /// <exception cref="LoginFailedException">登陆认证失败</exception>
+        public async Task ApplyTwoPhaseLoginInfoAsync(
+            Dictionary<string, string?> loginInfo)
+        {
+
             var loginResponse = await PostAsync(LoginUrl, new FormUrlEncodedContent(
-                postContent.Select(p => new KeyValuePair<string?, string?>(p.Key, p.Value)
+                loginInfo.Select(p => new KeyValuePair<string?, string?>(p.Key, p.Value)
                 )));
 
             if (loginResponse.RequestMessage?.RequestUri?.ToString() != LoginEndpoint)
             {
-                htmlDoc = new HtmlDocument();
+                var htmlDoc = new HtmlDocument();
                 htmlDoc.Load(await loginResponse.Content.ReadAsStreamAsync());
-                throw new LoginFailedException(username,
+                throw new LoginFailedException(
+                    loginInfo.GetValueOrDefault("username") ?? "<UNKNOWN-USER>",
                     htmlDoc.DocumentNode.SelectSingleNode(ErrorMessagePath).GetDirectInnerText());
             }
         }

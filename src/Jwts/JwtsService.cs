@@ -83,7 +83,7 @@ namespace HitRefresh.HitGeneralServices.Jwts
         {
 
             await httpClient.TryLoginFor(username, password, 3, captchaGenerator);
-
+            await LoginAsync();
         }
     }
 }
