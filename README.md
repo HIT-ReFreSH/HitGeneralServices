@@ -35,8 +35,8 @@ HIT通用服务集包含了以下常用的组件：
 |IsAuthorized|异步方法|检查是否已经完成统一认证登录|-|`bool`，是/否|-|
 |Win32CaptchaInput|静态函数(验证码填写适配器)|**适用于控制台程序。** 使用Windows默认图片查看器查看验证码图片|-|-|-|
 |CaptchaInputFactory|静态函数(验证码填写适配器工厂)|**适用于控制台程序。** 使用指定查看器生成验证码填写适配器|`string pathToJpegViewer`Jpeg查看器的路径|验证码填写适配器|-|
-|GetTwoPhaseLoginInfoAsync|异步方法|获取进行两段CAS登录的登录信息(第一阶段)|`string username`用户名|`Dictionary<string, string?>`用于两段异步登录的登录信息字典;其中键`password`对应值是加密的salt(Aes.Key);键`captchaResponse`如果存在,则对应值是用于获取验证码的url|-|
-|ApplyTwoPhaseLoginInfoAsync|异步方法|应用两段CAS登录的登录信息进行登录(第二阶段)|`Dictionary<string, string?> loginInfo`登录信息，原始产生自`GetTwoPhaseLoginInfoAsync(string)`;但是此处的键`password`对应值已经加密(Aes);键`captchaResponse`如果存在,则对应值已经完成人工填写。|-|`LoginFailedException`: 登陆认证失败，原因见`Message`。|
+|GetTwoPhaseLoginInfoAsync|异步方法|获取进行两段CAS登录的登录信息(第一阶段)|`string username`用户名|`Dictionary<string, string?>`用于两段异步登录的登录信息字典;其中键`password`对应值是加密的salt(Aes.Key);键`captcha`如果存在,则对应值是用于获取验证码的url|-|
+|ApplyTwoPhaseLoginInfoAsync|异步方法|应用两段CAS登录的登录信息进行登录(第二阶段)|`Dictionary<string, string?> loginInfo`登录信息，原始产生自`GetTwoPhaseLoginInfoAsync(string)`;但是此处的键`password`对应值已经加密(Aes);键`captcha`如果存在,则对应值已经完成人工填写。|-|`LoginFailedException`: 登陆认证失败，原因见`Message`。|
 
 ## Jwts.JwtsService 使用方法
 

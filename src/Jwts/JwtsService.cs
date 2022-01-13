@@ -69,7 +69,7 @@ namespace HitRefresh.HitGeneralServices.Jwts
         }
         private async Task LoginAsync()
         {
-            await httpClient.GetAsync("http://ids.hit.edu.cn/authserver/login?service=http://jwts.hit.edu.cn/");
+            await httpClient.GetAsync("https://ids.hit.edu.cn/authserver/login?service=http://jwts.hit.edu.cn/");
             await httpClient.GetAsync("http://jwts.hit.edu.cn/loginCAS");
         }
         /// <summary>

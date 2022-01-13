@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
@@ -15,21 +16,28 @@ namespace HitRefresh.HitGeneralServices.CasLogin
     public partial class LoginHttpClient : HttpClient
     {
         private const string WrongPasswordOrId = "您提供的用户名或者密码有误";
-        private const string LoginInfoNodePath = "/html/body/div[2]/div[2]/div[2]/div/div[3]/div/form/div";
-        private const string ErrorMessagePath = "/html/body/div[2]/div[2]/div[2]/div/div[3]/div/form/span";
-        private const string CaptchaUrl = "http://ids.hit.edu.cn/authserver/captcha.html";
-        private const string NeedCaptchaUrl = "http://ids.hit.edu.cn/authserver/needCaptcha.html";
-        private const string LoginUrl = "http://ids.hit.edu.cn/authserver/login";
-        private const string LoginEndpoint = "http://ids.hit.edu.cn/authserver/index.do";
+        private const string LoginInfoNodePath = "//*[@id='pwdFromId']/div";
+        private const string ErrorMessagePath = "//*[@id='formErrorTip2']/span";
+        private const string CaptchaUrl = "https://ids.hit.edu.cn/authserver/getCaptcha.htl";
+        private const string NeedCaptchaUrl = "https://ids.hit.edu.cn/authserver/checkNeedCaptcha.htl";
+        private const string LoginUrl = "https://ids.hit.edu.cn/authserver/login";
+        private static readonly string[] LoginEndpoints = {
+            "https://ids.hit.edu.cn/personalInfo/personCenter/index.html",
+            "https://ids.hit.edu.cn/personalInfo/personalMobile/index.html"
+        };
 
         /// <inheritdoc />
         public LoginHttpClient(HttpClientHandler handler) : base(handler)
         {
+            DefaultRequestHeaders.Add("Cookie",
+                "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=zh_CN");
         }
 
         /// <inheritdoc />
         public LoginHttpClient(HttpClientHandler handler, bool disposeHandler) : base(handler, disposeHandler)
         {
+            DefaultRequestHeaders.Add("Cookie",
+                "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=zh_CN");
         }
 
         /// <summary>
@@ -38,6 +46,8 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         public LoginHttpClient()
         {
             MaxResponseContentBufferSize = 256000;
+            DefaultRequestHeaders.Add("Cookie",
+                "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=zh_CN");
             DefaultRequestHeaders.Add("user-agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36");
         }
@@ -101,7 +111,7 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         public async Task<bool> IsAuthorized()
         {
             var rep = await GetAsync("http://ids.hit.edu.cn/authserver/login");
-            return rep.RequestMessage?.RequestUri?.ToString() == LoginEndpoint;
+            return LoginEndpoints.Any(x => x == rep.RequestMessage?.RequestUri?.ToString());
         }
 
         /// <summary>
@@ -171,14 +181,14 @@ namespace HitRefresh.HitGeneralServices.CasLogin
                 loginInfo["password"];
             loginInfo["password"] = Encrypt(
                 CryptoJsAes.GetRandomString(64) + password, pwdDefaultEncryptSalt);
-            if (loginInfo.ContainsKey("captchaResponse"))
+            if (loginInfo.ContainsKey("captcha"))
             {
                 if (captchaGenerator is null) throw new CaptchaRequiredException();
 
 
                 var captchaStream =
-                    await GetStreamAsync(loginInfo["captchaResponse"]);
-                loginInfo["captchaResponse"] = await captchaGenerator(captchaStream);
+                    await GetStreamAsync(loginInfo["captcha"]);
+                loginInfo["captcha"] = await captchaGenerator(captchaStream);
             }
 
             await ApplyTwoPhaseLoginInfoAsync(loginInfo);
@@ -191,7 +201,7 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         /// <returns>
         /// 用于两段异步登录的登录信息字典.
         /// 其中password对应的value是加密的salt，
-        /// captchaResponse对应的value如果存在，则是用于获取验证码的url
+        /// captcha对应的value如果存在，则是用于获取验证码的url
         /// </returns>
         public async Task<Dictionary<string, string?>>
             GetTwoPhaseLoginInfoAsync(string username)
@@ -199,16 +209,16 @@ namespace HitRefresh.HitGeneralServices.CasLogin
             var htmlDoc = new HtmlDocument();
 
             htmlDoc.Load(await GetStreamAsync(LoginUrl));
-
             var loginInfoNode =
                 htmlDoc.DocumentNode.SelectSingleNode(LoginInfoNodePath);
-            var pwdDefaultEncryptSalt = loginInfoNode.SelectSingleNode("//input[@id='pwdDefaultEncryptSalt']")
+            var pwdDefaultEncryptSalt = loginInfoNode.SelectSingleNode("//input[@id='pwdEncryptSalt']")
                 .GetAttributeValue("value", "");
 
             var captchaRequired = await GetStringAsync(
-                $"{NeedCaptchaUrl}?username={username}&pwdEncrypt2={pwdDefaultEncryptSalt}");
+                $"{NeedCaptchaUrl}?username={username}");
 
-            var captcha = captchaRequired == "true" ? $"{CaptchaUrl}?ts={new Random().Next(0, 999)}" : null;
+            var captcha = captchaRequired == "{\"isNeed\":true}" ?
+                $"{CaptchaUrl}?ts={(int)(DateTime.Now-new DateTime(1970,1,1)).TotalMilliseconds}" : null;
 
             string GetValue(string name)
             {
@@ -221,14 +231,14 @@ namespace HitRefresh.HitGeneralServices.CasLogin
                 { "password", pwdDefaultEncryptSalt }
             };
             if (captcha is { })
-                postContent.Add("captchaResponse", captcha);
+                postContent.Add("captcha", captcha);
             foreach (var key in new[]
             {
                 "lt",
+                "cllt",
                 "dllt",
                 "execution",
-                "_eventId",
-                "rmShown"
+                "_eventId"
             })
                 postContent.Add(key, GetValue(key));
 
@@ -248,17 +258,21 @@ namespace HitRefresh.HitGeneralServices.CasLogin
             Dictionary<string, string?> loginInfo)
         {
 
+            if (!loginInfo.ContainsKey("captcha")) loginInfo.Add("captcha", "");
+            loginInfo["cllt"] = "userNameLogin";
+
             var loginResponse = await PostAsync(LoginUrl, new FormUrlEncodedContent(
                 loginInfo.Select(p => new KeyValuePair<string?, string?>(p.Key, p.Value)
                 )));
-
-            if (loginResponse.RequestMessage?.RequestUri?.ToString() != LoginEndpoint)
+    
+            if (LoginEndpoints.All(x => x != loginResponse.RequestMessage?.RequestUri?.ToString()))
             {
                 var htmlDoc = new HtmlDocument();
                 htmlDoc.Load(await loginResponse.Content.ReadAsStreamAsync());
+                var xnode = htmlDoc.DocumentNode.SelectSingleNode(ErrorMessagePath);
                 throw new LoginFailedException(
                     loginInfo.GetValueOrDefault("username") ?? "<UNKNOWN-USER>",
-                    htmlDoc.DocumentNode.SelectSingleNode(ErrorMessagePath).GetDirectInnerText());
+                    xnode is null? "<UNKNOWN-ERROR>" : xnode.InnerText);
             }
         }
     }
