@@ -29,15 +29,13 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         /// <inheritdoc />
         public LoginHttpClient(HttpClientHandler handler) : base(handler)
         {
-            DefaultRequestHeaders.Add("Cookie",
-                "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=zh_CN");
+
         }
 
         /// <inheritdoc />
         public LoginHttpClient(HttpClientHandler handler, bool disposeHandler) : base(handler, disposeHandler)
         {
-            DefaultRequestHeaders.Add("Cookie",
-                "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=zh_CN");
+
         }
 
         /// <summary>
@@ -46,8 +44,6 @@ namespace HitRefresh.HitGeneralServices.CasLogin
         public LoginHttpClient()
         {
             MaxResponseContentBufferSize = 256000;
-            DefaultRequestHeaders.Add("Cookie",
-                "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=zh_CN");
             DefaultRequestHeaders.Add("user-agent",
                 "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36");
         }
