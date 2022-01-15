@@ -20,6 +20,8 @@ namespace TestConsole
             var jwts = new JwtsService();
             await jwts.LoginAsync(username, password);
             Console.WriteLine(await jwts.GetScheduleAsync(2020, JwtsSemester.Autumn));
+            Console.WriteLine(await jwts.GetSemesterStartAsync(2020, JwtsSemester.Autumn));
+            Console.WriteLine((await jwts.GetExamDetailsAsync())[0]);
         }
         private static async Task Main(string[] args)
         {

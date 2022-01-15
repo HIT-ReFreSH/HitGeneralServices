@@ -2,6 +2,7 @@
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -13,9 +14,9 @@ namespace HitRefresh.HitGeneralServices.Jwts
     /// <summary>
     /// 访问Jwts的服务
     /// </summary>
-    public class JwtsService
+    public partial class JwtsService
     {
-
+        private static readonly CultureInfo ChineseFormat = new CultureInfo("zh-CN");
         private LoginHttpClient httpClient = new();
         /// <summary>
         /// 查询个人课表
@@ -25,8 +26,8 @@ namespace HitRefresh.HitGeneralServices.Jwts
         /// <returns>[7,6]的数组，7为周一至周日，6为节次；数组的每个元素是该位置的课程(课程可能会占用1-3行)</returns>
         public async Task<List<string>[,]> GetScheduleAsync(uint year, JwtsSemester semester)
         {
-            var url = "http://jwts.hit.edu.cn/kbcx/queryGrkb";
-            var scheduleTableNodePath = "/html/body/div[1]/div/div[8]/div[2]/table";
+            const string url = "http://jwts.hit.edu.cn/kbcx/queryGrkb";
+            const string scheduleTableNodePath = "/html/body/div[1]/div/div[8]/div[2]/table";
             var formData = new MultipartFormDataContent()
             {
                 {new StringContent(semester switch
@@ -36,7 +37,6 @@ namespace HitRefresh.HitGeneralServices.Jwts
                 }), "xnxq" },
                 {new StringContent("kbcx/queryGrkb"),"fhlj" }
             };
-            httpClient.DefaultRequestHeaders.Add("Refer", url);
             var response = await httpClient.PostAsync(url, formData);
             var htmlDoc = new HtmlDocument();
 
@@ -44,7 +44,7 @@ namespace HitRefresh.HitGeneralServices.Jwts
             var scheduleTableNode = htmlDoc.DocumentNode.SelectSingleNode(scheduleTableNodePath);
             var scheduleTableRows = scheduleTableNode.SelectNodes("//tr").Skip(2).ToArray();
             var r = new List<string>[7,6];
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 var cells = scheduleTableRows[i].ChildNodes.Where(n => n.Name == "td").Skip(2).ToArray();
                 for (int j = 0; j < 7; j++)
@@ -56,6 +56,7 @@ namespace HitRefresh.HitGeneralServices.Jwts
             return r;
 
         }
+
         /// <summary>
         /// 采用给定的登录客户端(已经完成登录)，然后登录
         /// </summary>
@@ -69,8 +70,9 @@ namespace HitRefresh.HitGeneralServices.Jwts
         }
         private async Task LoginAsync()
         {
-            await httpClient.GetAsync("https://ids.hit.edu.cn/authserver/login?service=http://jwts.hit.edu.cn/");
-            await httpClient.GetAsync("http://jwts.hit.edu.cn/loginCAS");
+            var resp = await httpClient.GetAsync("http://jwts.hit.edu.cn/loginCAS");
+            resp= await httpClient.GetAsync("https://ids.hit.edu.cn/authserver/login?service=http%3A%2F%2Fjwts.hit.edu.cn%2FloginCAS");
+            resp = await httpClient.GetAsync(resp.Headers.Location);
         }
         /// <summary>
         /// 使用给定的用户名与密码登录
@@ -84,6 +86,38 @@ namespace HitRefresh.HitGeneralServices.Jwts
 
             await httpClient.TryLoginFor(username, password, 3, captchaGenerator);
             await LoginAsync();
+        }
+        /// <summary>
+        /// 获取学期开始时间
+        /// </summary>
+        /// <param name="year">年份</param>
+        /// <param name="semester">学期</param>
+        /// <returns>开始时间</returns>
+        public async Task<DateTime> GetSemesterStartAsync(uint year, JwtsSemester semester)
+        {
+            const string url = "http://jwts.hit.edu.cn/xlcx/queryXlcx";
+            const string beginningNodePath = "/html/body/div/div/div[5]/div[1]/div";
+            var formData = new MultipartFormDataContent()
+            {
+                {new StringContent(semester switch
+                {
+                    JwtsSemester.Autumn=>$"{year}-{year+1}{(int)semester}",
+                    _=>$"{year-1}-{year}{(int)semester}"
+                }), "xnxq" },
+            };
+
+            var response = await httpClient.PostAsync(url, formData);
+            var htmlDoc = new HtmlDocument();
+
+            htmlDoc.LoadHtml(await response.Content.ReadAsStringAsync());
+            var beginningNode = htmlDoc.DocumentNode.SelectSingleNode(beginningNodePath);
+            var monthExpr = beginningNode.ChildNodes
+                .First(n => n.HasClass("xfyq_top"))?.InnerText;
+
+            var dayExpr = beginningNode
+                .SelectNodes("//td").First(n => n.HasClass("sk_green")).InnerText.Trim();
+
+            return DateTime.Parse($"{monthExpr}{dayExpr}日", ChineseFormat);
         }
     }
 }

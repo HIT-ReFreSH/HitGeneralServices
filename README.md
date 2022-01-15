@@ -46,4 +46,7 @@ HIT通用服务集包含了以下常用的组件：
 |:---:|:---:|:----|:----|:----|:----|
 |LoginAsync|异步方法|进行统一认证登录|`string username`用户名<br> `string password`密码<br> `Func<Stream, Task<string>>? captchaGenerator`**可选。** 验证码填写适配器，用于在必须时填写验证码。|-|`CaptchaRequiredException`: 需要填写二维码，但是未提供对应的适配器<br>`LoginFailedException`: 登陆认证失败，原因见`Message`。|
 |LoginAsync|异步方法|使用已经登录完毕LoginHttpClient登录Jwts|LoginHttpClient，已经完成登录|-|-|
+|GetSemesterStartAsync|异步方法|获取学期开始日期|`uint year`学年<br> `JwtsSemester semester`学期|学期开始日期|-|
 |GetScheduleAsync|异步方法|获取课表信息|`uint year`学年<br> `JwtsSemester semester`学期|大小为[7,6]的字符串列表矩阵，7为周一至周日，6为节次；数组的每个元素是该位置的课程(课程可能会占用1-3行)|-|
+|GetExamDetailsAsync|异步方法|获取考试详细(默认学期全部类别)|-|一组考试详细记录|-|
+|GetExamDetailsAsync|异步方法|获取考试详细(指定学期类别)|`uint year`学年<br> `JwtsSemester semester`学期<br> `JwtsExamType type`类别|一组考试详细记录|-|
