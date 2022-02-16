@@ -27,7 +27,7 @@ namespace HitRefresh.HitGeneralServices.WeChatServiceHall
         /// 日期数据
         /// </summary>
         [JsonPropertyName("rqData")]
-        public WCourseEntry[] Dates { get; set; }
+        public WTimeEntry[] Dates { get; set; }
         /// <summary>
         /// 课程数据
         /// </summary>
