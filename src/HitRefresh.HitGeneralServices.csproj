@@ -12,13 +12,13 @@
 		<PackageProjectUrl>https://github.com/HIT-ReFreSH/HitGeneralServices</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/HIT-ReFreSH/HitGeneralServices.git</RepositoryUrl>
 		<RepositoryType>Github</RepositoryType>
-		<Version>0.4.4</Version>
+		<Version>0.5</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Nullable>enable</Nullable>
 		<LangVersion>10.0</LangVersion>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-		<PackageReleaseNotes>版本0.4.4：增加了学期开始查询和考试信息查询功能.</PackageReleaseNotes>
+		<PackageReleaseNotes>版本0.5：增加了匿名课表查询服务.</PackageReleaseNotes>
 		<Description>一些和HIT校园相关的小服务,提供乐学网认证用户信息和统一身份认证服务。详见https://github.com/HIT-ReFreSH/HitGeneralServices.</Description>
 		<Copyright>Copyright (c) 2019-2022 ReFreSH</Copyright>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

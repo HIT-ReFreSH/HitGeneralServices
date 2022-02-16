@@ -17,6 +17,7 @@
 HIT通用服务集包含了以下常用的组件：
 
 - HitInfoProviderFactory: 用于获取乐学网认证登录后，用户信息的工厂类
+- WeChatServices：微信服务大厅中的服务
 - CasLogin.LoginHttpClient：用于使用统一身份认证登录的HttpClient
 - Jwts.JwtsService：用于Jwts的各种服务
 
@@ -50,3 +51,10 @@ HIT通用服务集包含了以下常用的组件：
 |GetScheduleAsync|异步方法|获取课表信息|`uint year`学年<br> `JwtsSemester semester`学期|大小为[7,6]的字符串列表矩阵，7为周一至周日，6为节次；数组的每个元素是该位置的课程(课程可能会占用1-3行)|-|
 |GetExamDetailsAsync|异步方法|获取考试详细(默认学期全部类别)|-|一组考试详细记录|-|
 |GetExamDetailsAsync|异步方法|获取考试详细(指定学期类别)|`uint year`学年<br> `JwtsSemester semester`学期<br> `JwtsExamType type`类别|一组考试详细记录|-|
+
+## WeChatServices微信服务大厅使用方法
+
+这是一个静态类，直接调用对应方法即可。
+目前提供以下服务：
+
+- 匿名查询课表服务

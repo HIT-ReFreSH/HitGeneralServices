@@ -8,6 +8,14 @@ namespace TestConsole
 {
     internal class Program
     {
+        [SuitAlias("qk")]
+        public async void GetScheduleAnonymousAsync(string username)
+        {
+            var r = await HitRefresh.HitGeneralServices.WeChatServices.GetScheduleAnonymousAsync(
+                2022, JwtsSemester.Spring, username);
+            
+            Console.WriteLine(r.Count);
+        }
         public async void Login(string username, string password)
         {
             var server = new LoginHttpClient();
