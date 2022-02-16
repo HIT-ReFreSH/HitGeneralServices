@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using HitRefresh.HitGeneralServices.CasLogin;
 using PlasticMetal.MobileSuit;
 using HitRefresh.HitGeneralServices.Jwts;
+using HitRefresh.HitGeneralServices.WeChatServiceHall;
 
 namespace TestConsole
 {
@@ -11,7 +12,7 @@ namespace TestConsole
         [SuitAlias("qk")]
         public async void GetScheduleAnonymousAsync(string username)
         {
-            var r = await HitRefresh.HitGeneralServices.WeChatServices.GetScheduleAnonymousAsync(
+            var r = await WeChatServices.GetScheduleAnonymousAsync(
                 2022, JwtsSemester.Spring, username);
             
             Console.WriteLine(r.Count);
