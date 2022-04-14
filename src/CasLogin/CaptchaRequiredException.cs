@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace HitRefresh.HitGeneralServices.CasLogin
+namespace HitRefresh.HitGeneralServices.CasLogin;
+
+/// <summary>
+///     需要输入二维码
+/// </summary>
+public class CaptchaRequiredException : Exception
 {
-    /// <summary>
-    ///     需要输入二维码
-    /// </summary>
-    public class CaptchaRequiredException : Exception
-    {
-    }
 }

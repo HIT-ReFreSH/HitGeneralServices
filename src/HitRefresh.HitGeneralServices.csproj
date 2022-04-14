@@ -12,13 +12,13 @@
 		<PackageProjectUrl>https://github.com/HIT-ReFreSH/HitGeneralServices</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/HIT-ReFreSH/HitGeneralServices.git</RepositoryUrl>
 		<RepositoryType>Github</RepositoryType>
-		<Version>0.5.1</Version>
+		<Version>0.5.2</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Nullable>enable</Nullable>
 		<LangVersion>10.0</LangVersion>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-		<PackageReleaseNotes>版本0.5：增加了匿名课表查询服务.</PackageReleaseNotes>
+		<PackageReleaseNotes>版本0.5.2：增加了匿名课表查询服务的并行度.</PackageReleaseNotes>
 		<Description>一些和HIT校园相关的小服务,提供乐学网认证用户信息和统一身份认证服务。详见https://github.com/HIT-ReFreSH/HitGeneralServices.</Description>
 		<Copyright>Copyright (c) 2019-2022 ReFreSH</Copyright>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -37,8 +37,8 @@
 		<None Include="../README.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 	</ItemGroup>
 </Project>

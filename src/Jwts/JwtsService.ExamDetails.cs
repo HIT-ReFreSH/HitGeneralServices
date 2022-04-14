@@ -22,7 +22,7 @@ public partial class JwtsService
     }
 
     /// <summary>
-    /// 获取考试详细(指定学期和类别)
+    ///     获取考试详细(指定学期和类别)
     /// </summary>
     /// <param name="year"></param>
     /// <param name="semester"></param>
@@ -32,7 +32,7 @@ public partial class JwtsService
         uint year, JwtsSemester semester, JwtsExamType type)
     {
         const string url = "http://jwts.hit.edu.cn/kscx/queryKcForXs";
-        var formData = new MultipartFormDataContent()
+        var formData = new MultipartFormDataContent
         {
             {
                 new StringContent(semester switch
@@ -50,7 +50,7 @@ public partial class JwtsService
     }
 
     /// <summary>
-    /// 获取考试详细(默认学期)
+    ///     获取考试详细(默认学期)
     /// </summary>
     /// <returns>一组考试详细</returns>
     public async Task<JwtsExamDetail[]> GetExamDetailsAsync()
@@ -71,7 +71,7 @@ public partial class JwtsService
         var weekNumber = int.Parse(timeCellExpressions[1][1..^1]);
         var beginTime = TimeSpan.Parse($"{timeCellExpressions[^2]}:00");
         var endTime = TimeSpan.Parse($"{timeCellExpressions[^1]}:00");
-        return new()
+        return new JwtsExamDetail
         {
             Name = cells[0].InnerText.Trim(),
             Code = cells[1].InnerText.Trim(),
