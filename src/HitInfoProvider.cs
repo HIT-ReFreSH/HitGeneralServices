@@ -10,11 +10,7 @@ namespace HitRefresh.HitGeneralServices;
 public class HitInfoProvider
 {
     private const string CasAuth = "casattras";
-    private static readonly Regex RegexTeacherId = new(@"^[0-9]{8}$");
-    private static readonly Regex RegexInternationalStudentId = new(@"^[Ll][0-9]{9}$");
-    private static readonly Regex RegexUndergraduateId = new(@"^([0-9]{10})|(1[0-9]{2}[Ll][0-9]{6})$");
-    private static readonly Regex RegexMasterId = new(@"^[0-9]{2}[Ss][0-9]{6}$");
-    private static readonly Regex RegexDoctorId = new(@"^[0-9]{2}[Bb][0-9]{6}$");
+
 
     internal HitInfoProvider(IDictionary<string, Claim> claims, HitInfoProviderOptions options)
     {
@@ -30,17 +26,7 @@ public class HitInfoProvider
         else
         {
             Id = id.Value;
-            Role = RegexUndergraduateId.IsMatch(Id)
-                ? HitRole.Undergraduate
-                : RegexInternationalStudentId.IsMatch(Id)
-                    ? HitRole.InternationalStudent
-                    : RegexTeacherId.IsMatch(Id)
-                        ? HitRole.Teacher
-                        : RegexMasterId.IsMatch(Id)
-                            ? HitRole.Master
-                            : RegexDoctorId.IsMatch(Id)
-                                ? HitRole.Doctor
-                                : HitRole.Else;
+            Role = HitRoleHelper.GetRole(Id);
 
             Name = claims.TryGetValue(options.NameClaimType, out var name)
                 ? name.Value

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace HitRefresh.HitGeneralServices.WeChatServiceHall;
 
@@ -27,5 +28,5 @@ public record WScheduleModule
     ///     课程数据
     /// </summary>
     [JsonPropertyName("data")]
-    public WCourseEntry[] Courses { get; set; }
+    public List<WCourseEntry> Courses { get; set; }
 }
