@@ -8,7 +8,7 @@
 ![Nuget](https://img.shields.io/nuget/dt/HitGeneralServices?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/HIT-ReFreSH/HitGeneralServices?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/HIT-ReFreSH/HitGeneralServices?style=flat-square)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/HIT-ReFreSH/HitGeneralServices/publish_to_nuget?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/HIT-ReFreSH/HitGeneralServices/publish.yml?branch=master&style=flat-square)
 ![GitHub repo size](https://img.shields.io/github/repo-size/HIT-ReFreSH/HitGeneralServices?style=flat-square)
 ![GitHub code size](https://img.shields.io/github/languages/code-size/HIT-ReFreSH/HitGeneralServices?style=flat-square)
 
